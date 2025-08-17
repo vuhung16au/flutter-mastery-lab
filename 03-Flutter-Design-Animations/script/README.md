@@ -1,76 +1,139 @@
-# Flutter Smoke Test Script
+# Flutter Project Scripts
 
-This directory contains automation scripts for the Flutter project.
+This directory contains utility scripts for the Flutter project.
 
-## `flutter-smoke.sh`
+## Scripts
 
-A comprehensive smoke test script that validates the Flutter project's health and build capabilities.
+### 1. `flutter-smoke.sh`
+A comprehensive Flutter smoke test script that runs:
+- `flutter doctor`
+- `flutter analyze`
+- `flutter test`
+- `flutter build ios --no-codesign`
+- `flutter build apk`
 
-### What it does
-
-The script runs the following Flutter commands in sequence:
-
-1. **`flutter doctor`** - Checks Flutter installation and environment
-2. **`flutter analyze`** - Analyzes code for issues and warnings
-3. **`flutter test`** - Runs all unit and widget tests
-4. **`flutter build ios --no-codesign`** - Builds iOS app without codesigning
-5. **`flutter build apk`** - Builds Android APK
-
-### Usage
-
+**Usage:**
 ```bash
-# Make sure you're in the project root directory
-cd /path/to/flutter_design_animations
-
-# Run the smoke test
 ./script/flutter-smoke.sh
 ```
 
-### Features
+### 2. `security-scan.sh` 🔒
+A security scanning script that checks your Flutter project for sensitive information, passwords, API keys, and credentials that might be hardcoded or accidentally committed to version control.
 
-- ✅ **Colored output** for better readability
-- ✅ **Error handling** with proper exit codes
-- ✅ **Progress tracking** with step-by-step status
-- ✅ **Build artifact locations** displayed at the end
-- ✅ **Comprehensive validation** of project health
+**Usage:**
+```bash
+./script/security-scan.sh
+```
 
-### Exit Codes
+## Security Scanner Features
 
-- `0` - All tests passed successfully
-- `1` - One or more steps failed
+The security scanner performs the following checks:
 
-### Output
+### 🔍 **Sensitive File Detection**
+Scans for common sensitive file types:
+- `*.key`, `*.pem`, `*.p12`, `*.keystore`, `*.jks`, `*.pfx`
+- `*.crt`, `*.cer`, `*.der`, `*.p8`
+- `*.mobileprovision`, `*.entitlements`
+- `.env*`, `secrets.*`, `config.*`
 
-The script provides clear, colored output indicating:
-- `[INFO]` - General information and progress
-- `[SUCCESS]` - Successful completion of steps
-- `[WARNING]` - Important notes (like iOS codesigning)
-- `[ERROR]` - Failures that caused the script to exit
+### 🔑 **Hardcoded Credentials**
+Detects hardcoded credentials in code files:
+- Passwords, API keys, secrets, tokens
+- Database URLs, connection strings
+- Client IDs, client secrets
+- Private/public keys
 
-### Build Artifacts
+### 🚨 **Specific Sensitive Strings**
+Scans for known sensitive string patterns:
+- Stripe keys (`sk_live_`, `pk_live_`, etc.)
+- Google API keys (`AIza`)
+- AWS access keys (`AKIA`, `AKIB`, etc.)
+- GitHub tokens (`ghp_`, `gho_`, etc.)
+- Slack tokens (`xoxb-`, `xoxp-`, etc.)
+- Facebook tokens (`EAAA`, `EAAB`, etc.)
 
-After successful completion, the script creates:
+### 📝 **Comment Analysis**
+Checks comments for sensitive information references:
+- TODO/FIXME comments mentioning passwords, API keys
+- HACK/BUG comments with credential references
 
-- **iOS**: `build/ios/iphoneos/Runner.app` (53.8MB)
-- **Android**: `build/app/outputs/flutter-apk/app-release.apk` (21.5MB)
+### 🛡️ **Gitignore Validation**
+Verifies that `.gitignore` contains recommended patterns for sensitive files:
+- Certificate files
+- Environment files
+- Configuration files
+- Firebase configuration files
 
-### Notes
+## Output
 
-- The iOS build is created without codesigning for faster builds
-- Manual codesigning is required for iOS device deployment
-- The script exits on first failure to prevent cascading issues
-- All Flutter commands are run with their default settings
+The script provides color-coded output:
+- 🔵 **INFO**: General information
+- 🟢 **SUCCESS**: No issues found
+- 🟡 **WARNING**: Issues that should be reviewed
+- 🔴 **ERROR**: Script errors
+- 🟣 **CRITICAL**: Security issues that must be addressed
 
-### Use Cases
+## Exit Codes
 
-- **CI/CD Pipelines** - Automated testing and building
-- **Pre-commit Validation** - Ensure code quality before commits
-- **Release Preparation** - Validate builds before distribution
-- **Development Workflow** - Quick project health check
+- `0`: No critical issues found
+- `1`: Critical security issues detected (script will exit)
 
-### Requirements
+## Best Practices
 
-- Flutter SDK installed and in PATH
-- macOS with Xcode (for iOS builds)
-- Android SDK (for Android builds)
-- Sufficient disk space for build artifacts (~75MB)
+1. **Run before commits**: Use this script as a pre-commit hook or before pushing to GitHub
+2. **Regular scanning**: Run the script periodically during development
+3. **CI/CD integration**: Include this script in your CI/CD pipeline
+4. **Team awareness**: Share this script with your team members
+
+## Example Output
+
+```
+[INFO] Starting Flutter Security Scan...
+======================================
+
+[INFO] Scanning for sensitive file types...
+[SUCCESS] No sensitive file types found
+
+[INFO] Scanning for hardcoded credentials in code...
+[SUCCESS] No hardcoded credential patterns found
+
+[INFO] Scanning for specific sensitive strings...
+[SUCCESS] No sensitive strings found
+
+[INFO] Checking .gitignore for sensitive file patterns...
+[SUCCESS] .gitignore contains all recommended sensitive file patterns
+
+[INFO] Scanning comments for sensitive information...
+[SUCCESS] No sensitive comments found
+
+======================================
+🎉 Security scan completed successfully!
+No security issues found. ✅
+
+[INFO] Security scan completed!
+```
+
+## Troubleshooting
+
+If you encounter issues:
+
+1. **Permission denied**: Make sure the script is executable:
+   ```bash
+   chmod +x script/security-scan.sh
+   ```
+
+2. **Missing tools**: Ensure `grep` and `find` are installed on your system
+
+3. **False positives**: The script may flag legitimate code. Review each finding and adjust patterns if needed
+
+## Customization
+
+You can modify the script to:
+- Add new sensitive string patterns
+- Exclude additional directories
+- Change severity levels
+- Add custom file type checks
+
+## Security Note
+
+This script helps identify potential security issues but should not be your only security measure. Always follow security best practices and use proper secret management solutions.

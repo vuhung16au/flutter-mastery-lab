@@ -43,3 +43,23 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Security: Sensitive files and credentials
+*.key
+*.pem
+*.p12
+*.keystore
+*.jks
+*.pfx
+*.crt
+*.cer
+*.der
+*.p8
+*.mobileprovision
+*.entitlements
+.env*
+secrets.*
+config.*
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart
