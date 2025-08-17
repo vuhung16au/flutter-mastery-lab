@@ -1,6 +1,6 @@
 # hello_flutter
 
-Simple Flutter app. This doc shows how to run and build it on each platform.
+A simple Flutter app demonstrating cross-platform development. This document shows how to run and build it on each platform.
 
 ## The App
 
@@ -90,7 +90,7 @@ flutter devices
 You will see the list of available iOS devices and simulators.
 
 ```bash
-vuhung@vhM1  ~/Desktop/flutter-playground/HelloFlutter/hello_flutter   main  flutter run -d ios
+vuhung@vhM1  ~/Desktop/flutter-playground/HelloFlutter/hello_flutter  main  flutter run -d ios
 
 No devices found yet. Checking for wireless devices...
 
@@ -164,11 +164,75 @@ flutter build ipa --export-method ad-hoc
 flutter build macos --release
 ```
 
+**Expected output:**
+```
+Building macOS application...
+✓ Built build/macos/Build/Products/Release/hello_flutter.app (46.5MB)
+```
+
+**Generated files:**
+- `build/macos/Build/Products/Release/hello_flutter.app` - The main macOS application bundle (46.5MB)
+- `build/macos/Build/Products/Release/hello_flutter.app.dSYM` - Debug symbols for crash reporting
+- `build/macos/Build/Products/Release/App.framework` - Your Flutter app's framework
+- `build/macos/Build/Products/Release/FlutterMacOS.framework` - Flutter's macOS framework
+
+**To run the built macOS app:**
+```bash
+open build/macos/Build/Products/Release/hello_flutter.app
+```
+
+**Distribution options:**
+- Zip the `.app` bundle and share with other macOS users
+- Submit to Mac App Store (requires proper code signing)
+- Create a DMG installer for easier distribution
+
 ### Web (build)
 
 ```bash
 flutter build web --release
 ```
+
+**Expected output:**
+```
+Compiling lib/main.dart for the Web...                             13.3s
+✓ Built build/web
+```
+
+**Generated files:**
+- `build/web/index.html` - The main HTML file that loads your Flutter web app
+- `build/web/main.dart.js` - The compiled Dart code (1.6MB)
+- `build/web/flutter.js` - Flutter web runtime
+- `build/web/flutter_service_worker.js` - Service worker for offline functionality
+- `build/web/manifest.json` - Web app manifest for PWA features
+- `build/web/favicon.png` - App icon
+- `build/web/assets/` - Contains app assets
+- `build/web/canvaskit/` - CanvasKit renderer files
+
+**To serve the web app locally:**
+```bash
+cd build/web && python3 -m http.server 8000
+```
+
+Then access at: **http://localhost:8000**
+
+**Deployment options:**
+- Firebase Hosting: `firebase deploy`
+- Netlify: Drag and drop the `build/web` folder
+- Vercel: Connect your repository and set build output to `build/web`
+- Any traditional web server
+
+## Build Notes
+
+### Web Build Optimizations
+- Material Icons font is tree-shaken by 99.5% (from 1.6MB to 7.7KB)
+- Tree-shaking can be disabled with `--no-tree-shake-icons` flag
+- The app includes PWA (Progressive Web App) capabilities
+
+### macOS Build Features
+- Built for both ARM64 (Apple Silicon) and x86_64 (Intel) architectures
+- Release build optimized for performance
+- Includes all necessary frameworks and dependencies
+- Ready for distribution and App Store submission
 
 ## Useful scripts
 
@@ -178,6 +242,13 @@ flutter clean && flutter pub get
 
 # Show Flutter/Dart versions
 flutter --version
+
+# Check available devices
+flutter devices
+
+# Enable platform support
+flutter config --enable-web
+flutter config --enable-macos-desktop
 ```
 
 ## Troubleshooting
@@ -192,4 +263,6 @@ cd ios && pod install && cd -
 
 - iOS code signing: open `ios/Runner.xcworkspace` in Xcode, set a Team under Signing & Capabilities.
 - If device discovery fails, restart the IDE and run `flutter devices` again.
+- For web builds, ensure you have a modern browser and web support is enabled.
+- For macOS builds, ensure Xcode and Command Line Tools are properly installed.
 

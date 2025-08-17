@@ -84,7 +84,6 @@ linux/flutter/ephemeral/
 windows/flutter/ephemeral/
 
 # Web generated (handled by tool/build, but list for clarity)
-lib/generated_plugin_registrant.dart
 
 # Coverage
 coverage/
