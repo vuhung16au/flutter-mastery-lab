@@ -15,6 +15,8 @@ import '../widgets/progress_indicator_section.dart';
 import '../widgets/physics_simulation_section.dart';
 import '../widgets/rotate_transition_section.dart';
 import '../widgets/rive_animation_section.dart';
+// Import the animation gallery
+import '../animations/index.dart';
 
 class DesignAnimationsHome extends StatefulWidget {
   const DesignAnimationsHome({super.key});
@@ -119,6 +121,10 @@ class _DesignAnimationsHomeState extends State<DesignAnimationsHome>
                 child: FadeInAnimation(child: widget),
               ),
               children: [
+                // Animation Gallery Section
+                _buildSectionTitle('🎨 Animation Gallery'),
+                _buildAnimationGallerySection(),
+                
                 _buildSectionTitle('Customizing Fonts'),
                 CustomFontsSection(),
                 
@@ -176,6 +182,118 @@ class _DesignAnimationsHomeState extends State<DesignAnimationsHome>
           color: Theme.of(context).colorScheme.primary,
         ),
       ),
+    );
+  }
+
+  Widget _buildAnimationGallerySection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                color: Theme.of(context).colorScheme.primary,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Comprehensive Animation Gallery',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Explore 8 animation categories with 40+ animation types including basic animations, staggered effects, text animations, physics simulations, hero transitions, Lottie animations, modern Flutter Animate syntax, and loading animations.',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AnimationGallery(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.animation),
+                  label: const Text('Open Gallery'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BasicAnimations(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.play_arrow),
+                  label: const Text('Try Basic'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildAnimationChip('Basic', Icons.animation),
+              _buildAnimationChip('Staggered', Icons.list),
+              _buildAnimationChip('Text', Icons.text_fields),
+              _buildAnimationChip('Physics', Icons.science),
+              _buildAnimationChip('Hero', Icons.flight),
+              _buildAnimationChip('Lottie', Icons.movie),
+              _buildAnimationChip('Modern', Icons.auto_awesome),
+              _buildAnimationChip('Loading', Icons.hourglass_empty),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAnimationChip(String label, IconData icon) {
+    return Chip(
+      avatar: Icon(icon, size: 16),
+      label: Text(label, style: GoogleFonts.poppins(fontSize: 12)),
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer),
     );
   }
 }

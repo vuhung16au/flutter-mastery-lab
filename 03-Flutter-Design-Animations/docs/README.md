@@ -1,6 +1,37 @@
 # Flutter Design & Animations
 
-A comprehensive showcase of Flutter's design and animation capabilities, demonstrating various techniques for creating beautiful and engaging user interfaces.
+A comprehensive showcase of Flutter's design and animation capabilities, demonstrating various techniques for creating beautiful and engaging user interfaces. The project now includes a complete animation gallery with 8 different animation categories and 40+ animation types.
+
+## 🎨 New: Animation Gallery
+
+The project now features a comprehensive **Animation Gallery** located in `lib/animations/` that showcases various animation techniques and effects. The gallery is organized into 8 main categories:
+
+### Animation Categories
+
+1. **Basic Animations** - Fade, slide, scale, and rotate animations
+2. **Staggered Animations** - Sequential list and grid animations  
+3. **Text Animations** - Typewriter, fade, scale, wavy, and rotate text effects
+4. **Physics Animations** - Spring, bounce, gravity, and pendulum effects
+5. **Hero Animations** - Smooth screen transitions with shared elements
+6. **Lottie Animations** - Integration with Lottie animation files
+7. **Flutter Animate** - Modern animation syntax examples
+8. **Loading Animations** - Spinners, progress bars, and skeleton screens
+
+### Quick Start with Animation Gallery
+
+```dart
+import 'package:your_app/animations/index.dart';
+
+// Navigate to the animation gallery
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => const AnimationGallery(),
+  ),
+);
+```
+
+For detailed information about the animation gallery, see [animations.md](animations.md).
 
 ## Features
 
@@ -105,6 +136,11 @@ flutter pub get
 flutter run
 ```
 
+3. Explore the Animation Gallery:
+   - Navigate to the Animation Gallery from the main app
+   - Or use individual animation screens directly
+   - Check the documentation in `lib/animations/README.md`
+
 ## Dependencies
 
 - `google_fonts`: For custom typography
@@ -121,6 +157,22 @@ flutter run
 ```
 lib/
 ├── main.dart                 # Main application entry point
+├── animations/              # 🆕 Comprehensive animation gallery
+│   ├── index.dart           # Main exports and demo list
+│   ├── animation_gallery.dart # Main gallery screen
+│   ├── basic_animations.dart # Basic fade, slide, scale, rotate
+│   ├── staggered_animations.dart # Sequential animations
+│   ├── text_animations.dart  # Text-specific animations
+│   ├── physics_animations.dart # Physics-based animations
+│   ├── hero_animations.dart  # Hero transitions
+│   ├── lottie_animations.dart # Lottie file animations
+│   ├── flutter_animate_demos.dart # Modern animation syntax
+│   ├── loading_animations.dart # Loading states and spinners
+│   ├── example_usage.dart    # Integration examples
+│   ├── README.md             # Detailed documentation
+│   └── SUMMARY.md            # Quick overview
+├── screens/                  # App screens
+├── widgets/                  # Reusable widgets
 assets/
 ├── animations/              # Animation files (Lottie, Rive)
 ├── images/                  # Image assets
@@ -128,10 +180,30 @@ assets/
 docs/
 ├── README.md               # This file
 ├── animations.md           # Animation documentation
-└── customizing-fonts.md    # Font customization guide
+├── customizing-fonts.md    # Font customization guide
+└── themes.md               # Theme documentation
 ```
 
 ## Usage Examples
+
+### Animation Gallery
+```dart
+// Navigate to the animation gallery
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => const AnimationGallery(),
+  ),
+);
+
+// Use specific animation screens
+Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => const BasicAnimations(),
+  ),
+);
+```
 
 ### Custom Fonts
 ```dart
@@ -181,9 +253,22 @@ Navigator.of(context).push(
 )
 ```
 
+## 📊 Animation Gallery Statistics
+
+- **Total Animation Demos**: 8
+- **Total Animation Types**: 40+
+- **Lines of Code**: ~2000+
+- **Dependencies**: 5
+- **Platform Support**: Android, iOS, Web, Desktop
+
 ## Contributing
 
-Feel free to contribute to this project by adding new animation examples or improving existing ones.
+Feel free to contribute to this project by:
+- Adding new animation examples to the gallery
+- Improving existing animations
+- Adding new animation categories
+- Enhancing documentation
+- Reporting issues or suggesting improvements
 
 ## License
 
