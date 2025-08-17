@@ -2,6 +2,33 @@
 
 Simple Flutter app. This doc shows how to run and build it on each platform.
 
+## The App
+
+The main part of this hello world app is as simple as:
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MainApp());
+}
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text('G\'day from Sydney!'),
+        ),
+      ),
+    );
+  }
+}
+```
+
 ## Prerequisites
 
 - Flutter SDK (stable) installed and on PATH
