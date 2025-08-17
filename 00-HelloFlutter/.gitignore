@@ -1,0 +1,101 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Additional Android
+android/.gradle/
+android/captures/
+android/local.properties
+android/**/key.properties
+android/**/keystore.properties
+android/**/release/*.keystore
+android/**/release/*.jks
+android/**/GeneratedPluginRegistrant.java
+
+# iOS
+ios/Flutter/ephemeral/
+ios/Flutter/flutter_export_environment.sh
+ios/ServiceDefinitions.json
+ios/.symlinks/
+ios/Pods/
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Xcode user data
+**/*.mode1v3
+**/*.mode2v3
+**/*.perspectivev3
+**/*.pbxuser
+**/*.xcuserstate
+**/*.xcuserdatad/
+
+# macOS
+macos/Flutter/ephemeral/
+macos/Flutter/flutter_export_environment.sh
+macos/.symlinks/
+macos/Pods/
+macos/Runner/GeneratedPluginRegistrant.swift
+
+# Linux
+linux/flutter/ephemeral/
+
+# Windows
+windows/flutter/ephemeral/
+
+# Web generated (handled by tool/build, but list for clarity)
+lib/generated_plugin_registrant.dart
+
+# Coverage
+coverage/
+
+# Firebase configs (ignore if you don't want to commit them)
+**/GoogleService-Info.plist
+**/google-services.json
+**/firebase_app_id_file.json
+
+# Fastlane artifacts
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
