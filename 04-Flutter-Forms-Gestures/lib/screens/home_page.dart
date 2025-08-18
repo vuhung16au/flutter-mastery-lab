@@ -4,6 +4,9 @@ import 'form_submission_page.dart';
 import 'gestures_demo_page.dart';
 import 'dismissible_demo_page.dart';
 import 'drag_demo_page.dart';
+import 'package:flutter_forms_gestures/widgets/home/demo_button.dart';
+import 'package:flutter_forms_gestures/widgets/home/section_header.dart';
+import 'package:flutter_forms_gestures/widgets/home/features_summary.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -40,27 +43,25 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Forms Section
-            _buildSectionHeader('Forms', Icons.edit_document),
+            const SectionHeader(title: 'Forms', icon: Icons.edit_document),
             const SizedBox(height: 12),
-            _buildDemoButton(
-              context,
-              'Form Validation Demo',
-              'Validate form inputs with real-time feedback',
-              Icons.verified,
-              Colors.blue,
-              () => Navigator.push(
+            DemoButton(
+              title: 'Form Validation Demo',
+              description: 'Validate form inputs with real-time feedback',
+              icon: Icons.verified,
+              color: Colors.blue,
+              onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const FormValidationPage()),
               ),
             ),
             const SizedBox(height: 8),
-            _buildDemoButton(
-              context,
-              'Form Submission Demo',
-              'Submit forms with data handling',
-              Icons.send,
-              Colors.green,
-              () => Navigator.push(
+            DemoButton(
+              title: 'Form Submission Demo',
+              description: 'Submit forms with data handling',
+              icon: Icons.send,
+              color: Colors.green,
+              onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const FormSubmissionPage()),
               ),
@@ -69,39 +70,36 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Gestures Section
-            _buildSectionHeader('Gestures', Icons.touch_app),
+            const SectionHeader(title: 'Gestures', icon: Icons.touch_app),
             const SizedBox(height: 12),
-            _buildDemoButton(
-              context,
-              'Complete Gestures Demo',
-              'All gesture types from TutorialsPoint & Flutter Docs',
-              Icons.gesture,
-              Colors.purple,
-              () => Navigator.push(
+            DemoButton(
+              title: 'Complete Gestures Demo',
+              description: 'All gesture types from TutorialsPoint & Flutter Docs',
+              icon: Icons.gesture,
+              color: Colors.purple,
+              onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const GesturesDemoPage()),
               ),
             ),
             const SizedBox(height: 8),
-            _buildDemoButton(
-              context,
-              'Swipe to Dismiss Demo',
-              'Dismissible widget with undo functionality',
-              Icons.swipe,
-              Colors.orange,
-              () => Navigator.push(
+            DemoButton(
+              title: 'Swipe to Dismiss Demo',
+              description: 'Dismissible widget with undo functionality',
+              icon: Icons.swipe,
+              color: Colors.orange,
+              onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const DismissibleDemoPage()),
               ),
             ),
             const SizedBox(height: 8),
-            _buildDemoButton(
-              context,
-              'Drag & Drop Demo',
-              'Draggable widgets with drop zones',
-              Icons.drag_handle,
-              Colors.teal,
-              () => Navigator.push(
+            DemoButton(
+              title: 'Drag & Drop Demo',
+              description: 'Draggable widgets with drop zones',
+              icon: Icons.drag_handle,
+              color: Colors.teal,
+              onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const DragDemoPage()),
               ),
@@ -110,145 +108,9 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Features Summary
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Implemented Features',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildFeatureItem('✅ All TutorialsPoint gestures', 'Tap, Double Tap, Drag, Flick, Pinch, Spread, Panning'),
-                    _buildFeatureItem('✅ Material Design ripples', 'InkWell for proper touch feedback'),
-                    _buildFeatureItem('✅ Swipe to dismiss', 'Dismissible widget with confirmation'),
-                    _buildFeatureItem('✅ Drag and drop', 'Draggable widgets with drop zones'),
-                    _buildFeatureItem('✅ Form validation', 'Real-time validation with error handling'),
-                    _buildFeatureItem('✅ Visual feedback', 'Snackbars, animations, and status updates'),
-                  ],
-                ),
-              ),
-            ),
+            const FeaturesSummary(),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.blue, size: 24),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDemoButton(
-    BuildContext context,
-    String title,
-    String description,
-    IconData icon,
-    Color color,
-    VoidCallback onPressed,
-  ) {
-    return Card(
-      elevation: 2,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                                 decoration: BoxDecoration(
-                   color: color.withValues(alpha: 0.1),
-                   borderRadius: BorderRadius.circular(8),
-                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.grey.shade400,
-                size: 16,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFeatureItem(String title, String description) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

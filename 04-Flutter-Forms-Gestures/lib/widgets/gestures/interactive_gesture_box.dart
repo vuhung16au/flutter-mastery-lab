@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'gesture_stats_card.dart';
 
 typedef GestureStatsCallback = void Function({
   required String lastGesture,
