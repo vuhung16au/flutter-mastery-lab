@@ -1,11 +1,11 @@
 {
-    "name": "flutter_forms_gestures",
-    "short_name": "flutter_forms_gestures",
+    "name": "Flutter Forms & Gestures Demo",
+    "short_name": "Forms & Gestures",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A comprehensive Flutter demo showcasing form validation, form submission, and gesture handling with interactive examples and best practices.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
