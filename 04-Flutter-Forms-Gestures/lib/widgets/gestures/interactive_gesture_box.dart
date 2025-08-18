@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_forms_gestures/widgets/gestures/gesture_animation_controller.dart';
 
 typedef GestureStatsCallback = void Function({
   required String lastGesture,
@@ -28,10 +29,7 @@ class InteractiveGestureBox extends StatefulWidget {
 
 class _InteractiveGestureBoxState extends State<InteractiveGestureBox>
     with TickerProviderStateMixin {
-  late AnimationController _scaleController;
-  late AnimationController _rotationController;
-  late AnimationController _colorController;
-  late AnimationController _flickController;
+  late GestureAnimationController _animationController;
 
   double _scale = 1.0;
   double _rotation = 0.0;
@@ -41,30 +39,12 @@ class _InteractiveGestureBoxState extends State<InteractiveGestureBox>
   @override
   void initState() {
     super.initState();
-    _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-    _rotationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _colorController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    _flickController = AnimationController(
-      duration: const Duration(milliseconds: 400),
-      vsync: this,
-    );
+    _animationController = GestureAnimationController(this);
   }
 
   @override
   void dispose() {
-    _scaleController.dispose();
-    _rotationController.dispose();
-    _colorController.dispose();
-    _flickController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -104,19 +84,19 @@ class _InteractiveGestureBoxState extends State<InteractiveGestureBox>
 
   void _onTap() {
     _emit(lastGesture: 'Tap detected!', tapDelta: 1);
-    _scaleController.forward().then((_) => _scaleController.reverse());
+    _animationController.triggerScaleAnimation();
   }
 
   void _onDoubleTap() {
     setState(() => _rotation += 90);
     _emit(lastGesture: 'Double tap detected!', doubleTapDelta: 1, rotationDeg: _rotation);
-    _rotationController.forward().then((_) => _rotationController.reverse());
+    _animationController.triggerRotationAnimation();
   }
 
   void _onLongPress() {
     setState(() => _boxColor = _randomColor());
     _emit(lastGesture: 'Long press detected!', longPressDelta: 1, boxColor: _boxColor);
-    _colorController.forward().then((_) => _colorController.reverse());
+    _animationController.triggerColorAnimation();
   }
 
   void _onScaleStart(ScaleStartDetails _) {
@@ -146,7 +126,7 @@ class _InteractiveGestureBoxState extends State<InteractiveGestureBox>
     if (details.velocity.pixelsPerSecond.distance > 800) {
       final v = details.velocity.pixelsPerSecond.distance;
       _emit(lastGesture: 'Flick detected!', flickDelta: 1, lastFlickVelocity: v);
-      _flickController.forward().then((_) => _flickController.reverse());
+      _animationController.triggerFlickAnimation();
     } else {
       _emit(lastGesture: 'Gesture completed. Final scale: ${_scale.toStringAsFixed(2)}');
     }
@@ -170,17 +150,12 @@ class _InteractiveGestureBoxState extends State<InteractiveGestureBox>
           onScaleUpdate: _onScaleUpdate,
           onScaleEnd: _onScaleEnd,
           child: AnimatedBuilder(
-            animation: Listenable.merge([
-              _scaleController,
-              _rotationController,
-              _colorController,
-              _flickController,
-            ]),
+            animation: _animationController.combinedAnimation,
             builder: (context, child) {
               return Transform.scale(
-                scale: _scale * (1.0 + _scaleController.value * 0.1),
+                scale: _scale * (1.0 + _animationController.scaleController.value * 0.1),
                 child: Transform.rotate(
-                  angle: (_rotation * 3.14159 / 180) + (_rotationController.value * 0.1),
+                  angle: (_rotation * 3.14159 / 180) + (_animationController.rotationController.value * 0.1),
                   child: Transform.translate(
                     offset: _position,
                     child: Material(
@@ -197,13 +172,13 @@ class _InteractiveGestureBoxState extends State<InteractiveGestureBox>
                             color: Color.lerp(
                               _boxColor,
                               _boxColor.withValues(alpha: 0.7),
-                              _colorController.value,
+                              _animationController.colorController.value,
                             ),
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 8 + (_flickController.value * 4),
+                                blurRadius: 8 + (_animationController.flickController.value * 4),
                                 offset: const Offset(0, 4),
                               ),
                             ],

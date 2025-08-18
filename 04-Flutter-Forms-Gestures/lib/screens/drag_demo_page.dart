@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_forms_gestures/models/drag_models.dart';
+import 'package:flutter_forms_gestures/widgets/gestures/drag_status_display.dart';
+import 'package:flutter_forms_gestures/widgets/gestures/drag_zones.dart';
+import 'package:flutter_forms_gestures/widgets/gestures/draggable_items.dart';
 
 class DragDemoPage extends StatefulWidget {
   const DragDemoPage({super.key});
@@ -74,139 +77,60 @@ class _DragDemoPageState extends State<DragDemoPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header Card
-            Card(
-              margin: const EdgeInsets.all(16),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Drag Demo',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Demonstrating drag functionality including Draggable widgets and drop zones.',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Icon(Icons.drag_handle, color: Colors.blue, size: 16),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Drag Count: $_dragCount',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Drag Status
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: _isDragging ? Colors.blue.withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: _isDragging ? Colors.blue.withValues(alpha: 0.3) : Colors.grey.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    _isDragging ? Icons.drag_handle : Icons.info_outline,
-                    color: _isDragging ? Colors.blue : Colors.grey,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _lastDragStatus,
-                      style: TextStyle(
-                        color: _isDragging ? Colors.blue : Colors.grey,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            DragStatusDisplay(
+              isDragging: _isDragging,
+              dragCount: _dragCount,
+              lastDragStatus: _lastDragStatus,
             ),
 
             const SizedBox(height: 16),
 
             // Draggable Items Section
-            Container(
-              height: 200,
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Draggable Items',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Expanded(
-                    child: Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: _draggableItems.map((item) => _buildDraggableItem(item)).toList(),
-                    ),
-                  ),
-                ],
-              ),
+            DraggableItems(
+              draggableItems: _draggableItems,
+              onDragStarted: (String itemId) {
+                setState(() {
+                  _isDragging = true;
+                  _lastDragStatus = 'Dragging item $itemId...';
+                });
+              },
+              onDragEnd: (String itemId) {
+                setState(() {
+                  _isDragging = false;
+                  _dragCount++;
+                  _lastDragStatus = 'Drag completed for item $itemId';
+                });
+              },
             ),
 
             const SizedBox(height: 16),
 
             // Drop Zones Section
-            Container(
-              height: 200,
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Drop Zones',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+            DragZones(
+              dropZones: _dropZones,
+              onItemDropped: (String? itemId) {
+                if (itemId != null) {
+                  setState(() {
+                    _dragCount++;
+                    _lastDragStatus = 'Item $itemId dropped successfully!';
+                  });
+                  
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Item $itemId successfully dropped!'),
+                      backgroundColor: Colors.green,
+                      duration: const Duration(seconds: 2),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Expanded(
-                    child: Row(
-                      children: _dropZones.map((zone) => Expanded(
-                        child: _buildDropZone(zone),
-                      )).toList(),
-                    ),
-                  ),
-                ],
-              ),
+                  );
+                }
+              },
+              onItemLeft: (String? itemId) {
+                if (itemId != null) {
+                  setState(() {
+                    _lastDragStatus = 'Item $itemId left drop zone';
+                  });
+                }
+              },
             ),
 
             const SizedBox(height: 16),
@@ -261,159 +185,9 @@ class _DragDemoPageState extends State<DragDemoPage> {
     );
   }
 
-  Widget _buildDraggableItem(DraggableItem item) {
-    return Draggable<String>(
-      data: item.id,
-      feedback: Material(
-        elevation: 8,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: item.color,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            item.icon,
-            color: Colors.white,
-            size: 32,
-          ),
-        ),
-      ),
-      childWhenDragging: Container(
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          color: item.color.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: item.color.withValues(alpha: 0.5), style: BorderStyle.solid),
-        ),
-        child: Icon(
-          item.icon,
-          color: item.color.withValues(alpha: 0.5),
-          size: 32,
-        ),
-      ),
-      onDragStarted: () {
-        setState(() {
-          _isDragging = true;
-          _lastDragStatus = 'Dragging ${item.title}...';
-        });
-      },
-      onDragEnd: (details) {
-        setState(() {
-          _isDragging = false;
-          _dragCount++;
-          _lastDragStatus = 'Drag completed for ${item.title}';
-        });
-      },
-      child: Container(
-        width: 80,
-        height: 80,
-        decoration: BoxDecoration(
-          color: item.color,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              item.icon,
-              color: Colors.white,
-              size: 24,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              item.title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildDropZone(DropZone zone) {
-    return DragTarget<String>(
-      builder: (context, candidateData, rejectedData) {
-        bool isHighlighted = candidateData.isNotEmpty;
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          decoration: BoxDecoration(
-            color: isHighlighted 
-                ? zone.color.withValues(alpha: 0.6)
-                : zone.color,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isHighlighted ? Colors.blue : Colors.grey.shade400,
-              width: isHighlighted ? 2 : 1,
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                isHighlighted ? Icons.add_circle : Icons.place,
-                color: isHighlighted ? Colors.blue : Colors.grey.shade600,
-                size: 32,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                zone.title,
-                style: TextStyle(
-                  color: isHighlighted ? Colors.blue : Colors.grey.shade700,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Accepts: ${zone.acceptedItems.join(", ")}',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 10,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
-      },
-      onWillAcceptWithDetails: (details) {
-        return zone.acceptedItems.contains(details.data);
-      },
-      onAcceptWithDetails: (details) {
-        setState(() {
-          _dragCount++;
-          _lastDragStatus = 'Item ${details.data} dropped in ${zone.title}!';
-        });
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Item ${details.data} successfully dropped in ${zone.title}!'),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      },
-      onLeave: (data) {
-        setState(() {
-          _lastDragStatus = 'Item $data left ${zone.title}';
-        });
-      },
-    );
-  }
+
+
 
   void _resetDemo() {
     setState(() {

@@ -78,8 +78,12 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const FormsGesturesApp());
 
+    // Scroll to make sure the Swipe to Dismiss button is visible
+    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -200));
+    await tester.pumpAndSettle();
+
     // Tap the Swipe to Dismiss Demo button
-    await tester.tap(find.text('Swipe to Dismiss Demo'));
+    await tester.tap(find.text('Swipe to Dismiss Demo'), warnIfMissed: false);
     await tester.pumpAndSettle();
 
     // Verify that we're on the Dismissible page

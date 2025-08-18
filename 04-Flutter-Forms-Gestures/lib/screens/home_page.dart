@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'form_validation_page.dart';
 import 'form_submission_page.dart';
+import 'form_focus_demo_page.dart';
 import 'gestures_demo_page.dart';
 import 'dismissible_demo_page.dart';
 import 'drag_demo_page.dart';
+import 'ripple_gesture_demo_page.dart';
 import 'package:flutter_forms_gestures/widgets/home/demo_button.dart';
 import 'package:flutter_forms_gestures/widgets/home/section_header.dart';
 import 'package:flutter_forms_gestures/widgets/home/features_summary.dart';
@@ -66,6 +68,17 @@ class HomePage extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const FormSubmissionPage()),
               ),
             ),
+            const SizedBox(height: 8),
+            DemoButton(
+              title: 'Form Focus & Changes Demo',
+              description: 'Focus management and real-time field changes',
+              icon: Icons.keyboard,
+              color: Colors.indigo,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FormFocusDemoPage()),
+              ),
+            ),
 
             const SizedBox(height: 24),
 
@@ -102,6 +115,17 @@ class HomePage extends StatelessWidget {
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const DragDemoPage()),
+              ),
+            ),
+            const SizedBox(height: 8),
+            DemoButton(
+              title: 'Ripple & Gesture Effects Demo',
+              description: 'Ripple effects and enhanced tap handling',
+              icon: Icons.radio_button_checked,
+              color: Colors.deepPurple,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const RippleGestureDemoPage()),
               ),
             ),
 
