@@ -5,6 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_forms_gestures/main.dart';
@@ -18,10 +19,12 @@ void main() {
     expect(find.text('Flutter Forms & Gestures'), findsOneWidget);
     expect(find.text('Flutter Forms & Gestures Demo'), findsOneWidget);
 
-    // Verify that all three main navigation buttons are present
+    // Verify that all main navigation buttons are present
     expect(find.text('Form Validation Demo'), findsOneWidget);
     expect(find.text('Form Submission Demo'), findsOneWidget);
-    expect(find.text('Gestures Demo'), findsOneWidget);
+    expect(find.text('Complete Gestures Demo'), findsOneWidget);
+    expect(find.text('Swipe to Dismiss Demo'), findsOneWidget);
+    expect(find.text('Drag & Drop Demo'), findsOneWidget);
   });
 
   testWidgets('Form Validation page navigation test', (WidgetTester tester) async {
@@ -58,18 +61,44 @@ void main() {
     expect(find.text('Email Address *'), findsOneWidget); // Form field
   });
 
-  testWidgets('Gestures page navigation test', (WidgetTester tester) async {
+  testWidgets('Complete Gestures page navigation test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const FormsGesturesApp());
 
-    // Tap the Gestures Demo button
-    await tester.tap(find.text('Gestures Demo'));
+    // Tap the Complete Gestures Demo button
+    await tester.tap(find.text('Complete Gestures Demo'));
     await tester.pumpAndSettle();
 
     // Verify that we're on the Gestures page
-    expect(find.text('Gestures Demo'), findsOneWidget); // AppBar title
-    expect(find.text('Interactive Gestures Demo'), findsOneWidget); // Main title
+    expect(find.text('Flutter Gestures Demo'), findsAtLeastNWidgets(1)); // AppBar title and main title
     expect(find.text('Gesture Status'), findsOneWidget); // Status section
-    expect(find.text('Available Gestures'), findsOneWidget); // Instructions section
+  });
+
+  testWidgets('Swipe to Dismiss page navigation test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const FormsGesturesApp());
+
+    // Tap the Swipe to Dismiss Demo button
+    await tester.tap(find.text('Swipe to Dismiss Demo'));
+    await tester.pumpAndSettle();
+
+    // Verify that we're on the Dismissible page
+    expect(find.text('Swipe to Dismiss Demo'), findsAtLeastNWidgets(1)); // AppBar title and main title
+  });
+
+  testWidgets('Drag & Drop page navigation test', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const FormsGesturesApp());
+
+    // Scroll to make sure the Drag & Drop button is visible
+    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -300));
+    await tester.pumpAndSettle();
+
+    // Tap the Drag & Drop Demo button
+    await tester.tap(find.text('Drag & Drop Demo'), warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    // Verify that we're on the Drag page
+    expect(find.text('Drag Demo'), findsAtLeastNWidgets(1)); // AppBar title and main title
   });
 }

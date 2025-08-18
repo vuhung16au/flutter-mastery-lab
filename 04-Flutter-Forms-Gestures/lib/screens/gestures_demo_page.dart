@@ -31,13 +31,8 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
   int _panCount = 0;
   
   // Gesture tracking variables
-  bool _isDragging = false;
-  bool _isPanning = false;
-  Offset? _dragStartPosition;
   DateTime? _lastFlickTime;
   double _lastFlickVelocity = 0.0;
-  Offset? _lastFocalPoint;
-  DateTime? _dragStartTime;
 
   @override
   void initState() {
@@ -69,13 +64,22 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
     super.dispose();
   }
 
-  // Tap gesture
+  // Tap gesture with Material ripple
   void _onTap() {
     setState(() {
       _tapCount++;
       _lastGesture = 'Tap detected! Count: $_tapCount';
     });
     _scaleController.forward().then((_) => _scaleController.reverse());
+    
+    // Show snackbar for better feedback
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Tap detected! Count: $_tapCount'),
+        duration: const Duration(milliseconds: 500),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   // Double tap gesture
@@ -86,6 +90,15 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
       _rotation += 90;
     });
     _rotationController.forward().then((_) => _rotationController.reverse());
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Double tap detected! Count: $_doubleTapCount'),
+        duration: const Duration(milliseconds: 500),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.purple,
+      ),
+    );
   }
 
   // Long press gesture
@@ -96,13 +109,20 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
       _boxColor = _getRandomColor();
     });
     _colorController.forward().then((_) => _colorController.reverse());
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Long press detected! Count: $_longPressCount'),
+        duration: const Duration(milliseconds: 500),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.orange,
+      ),
+    );
   }
 
   // Scale gesture (handles both scaling and panning)
   void _onScaleStart(ScaleStartDetails details) {
     setState(() {
-      _lastFocalPoint = details.focalPoint;
-      _dragStartTime = DateTime.now();
       _lastGesture = 'Gesture started';
     });
   }
@@ -148,6 +168,15 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
         _lastFlickTime = DateTime.now();
         _lastFlickVelocity = details.velocity.pixelsPerSecond.distance;
         _flickController.forward().then((_) => _flickController.reverse());
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Flick detected! Velocity: ${_lastFlickVelocity.toStringAsFixed(0)} px/s'),
+            duration: const Duration(milliseconds: 500),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+          ),
+        );
       } else {
         _lastGesture = 'Gesture completed. Final scale: ${_scale.toStringAsFixed(2)}';
       }
@@ -227,7 +256,7 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Demonstrating all Flutter gesture types from TutorialsPoint',
+                      'Demonstrating all Flutter gesture types from TutorialsPoint & Flutter Docs',
                       style: TextStyle(
                         color: Colors.grey,
                       ),
@@ -298,7 +327,7 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
             ),
             const SizedBox(height: 16),
 
-            // Interactive Box Container
+            // Interactive Box Container with Material Ripples
             Container(
               height: 300,
               decoration: BoxDecoration(
@@ -328,28 +357,37 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                           angle: (_rotation * 3.14159 / 180) + (_rotationController.value * 0.1),
                           child: Transform.translate(
                             offset: _position,
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: Color.lerp(
-                                  _boxColor,
-                                  _boxColor.withValues(alpha: 0.7),
-                                  _colorController.value,
-                                ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: _onTap,
+                                onDoubleTap: _onDoubleTap,
+                                onLongPress: _onLongPress,
                                 borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.2),
-                                    blurRadius: 8 + (_flickController.value * 4),
-                                    offset: const Offset(0, 4),
+                                child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Color.lerp(
+                                      _boxColor,
+                                      _boxColor.withValues(alpha: 0.7),
+                                      _colorController.value,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(alpha: 0.2),
+                                        blurRadius: 8 + (_flickController.value * 4),
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.touch_app,
-                                color: Colors.white,
-                                size: 40,
+                                  child: const Icon(
+                                    Icons.touch_app,
+                                    color: Colors.white,
+                                    size: 40,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -370,7 +408,7 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Available Gestures (from TutorialsPoint)',
+                      'Available Gestures (from TutorialsPoint & Flutter Docs)',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -385,6 +423,7 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                     _buildGestureInstruction('Spread/Zoom', 'Opposite of pinching', Icons.zoom_in),
                     _buildGestureInstruction('Panning', 'Touching and moving in any direction without releasing', Icons.pan_tool),
                     _buildGestureInstruction('Long Press', 'Press and hold for extended period', Icons.timer),
+                    _buildGestureInstruction('Material Ripples', 'Visual feedback using InkWell', Icons.waves),
                   ],
                 ),
               ),
