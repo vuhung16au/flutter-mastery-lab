@@ -52,7 +52,10 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify that we're on the Form Submission page
-    expect(find.text('Form Submission Demo'), findsNWidgets(2)); // AppBar title + body text
+    expect(find.text('Form Submission Demo'), findsOneWidget); // AppBar title
+    expect(find.text('Contact Form'), findsOneWidget); // Main form title
+    expect(find.text('Full Name *'), findsOneWidget); // Form field
+    expect(find.text('Email Address *'), findsOneWidget); // Form field
   });
 
   testWidgets('Gestures page navigation test', (WidgetTester tester) async {
@@ -64,6 +67,9 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify that we're on the Gestures page
-    expect(find.text('Gestures Demo'), findsNWidgets(2)); // AppBar title + body text
+    expect(find.text('Gestures Demo'), findsOneWidget); // AppBar title
+    expect(find.text('Interactive Gestures Demo'), findsOneWidget); // Main title
+    expect(find.text('Gesture Status'), findsOneWidget); // Status section
+    expect(find.text('Available Gestures'), findsOneWidget); // Instructions section
   });
 }

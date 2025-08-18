@@ -194,7 +194,7 @@ class _FormSubmissionPageState extends State<FormSubmissionPage> {
               
               // Category Dropdown
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: const InputDecoration(
                   labelText: 'Category *',
                   prefixIcon: Icon(Icons.category),

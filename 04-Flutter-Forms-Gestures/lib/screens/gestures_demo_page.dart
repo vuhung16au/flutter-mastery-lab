@@ -225,13 +225,13 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                               decoration: BoxDecoration(
                                 color: Color.lerp(
                                   _boxColor,
-                                  _boxColor.withOpacity(0.7),
+                                  _boxColor.withValues(alpha: 0.7),
                                   _colorController.value,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
+                                    color: Colors.black.withValues(alpha: 0.2),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),
@@ -297,7 +297,7 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                     _buildPropertyRow('Scale', '${_scale.toStringAsFixed(2)}x'),
                     _buildPropertyRow('Rotation', '${_rotation.toStringAsFixed(0)}°'),
                     _buildPropertyRow('Position', '(${_position.dx.toStringAsFixed(1)}, ${_position.dy.toStringAsFixed(1)})'),
-                    _buildPropertyRow('Color', '#${_boxColor.value.toRadixString(16).toUpperCase().substring(2)}'),
+                    _buildPropertyRow('Color', '#${_boxColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}'),
                   ],
                 ),
               ),
@@ -312,9 +312,9 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
