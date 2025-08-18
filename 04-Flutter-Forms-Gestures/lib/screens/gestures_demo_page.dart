@@ -12,15 +12,32 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
   late AnimationController _scaleController;
   late AnimationController _rotationController;
   late AnimationController _colorController;
+  late AnimationController _flickController;
   
   double _scale = 1.0;
   double _rotation = 0.0;
   Color _boxColor = Colors.blue;
   Offset _position = const Offset(0, 0);
   String _lastGesture = 'No gesture detected';
+  
+  // Gesture counters
   int _tapCount = 0;
   int _longPressCount = 0;
   int _doubleTapCount = 0;
+  int _dragCount = 0;
+  int _flickCount = 0;
+  int _pinchCount = 0;
+  int _spreadCount = 0;
+  int _panCount = 0;
+  
+  // Gesture tracking variables
+  bool _isDragging = false;
+  bool _isPanning = false;
+  Offset? _dragStartPosition;
+  DateTime? _lastFlickTime;
+  double _lastFlickVelocity = 0.0;
+  Offset? _lastFocalPoint;
+  DateTime? _dragStartTime;
 
   @override
   void initState() {
@@ -37,6 +54,10 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
+    _flickController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
   }
 
   @override
@@ -44,9 +65,11 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
     _scaleController.dispose();
     _rotationController.dispose();
     _colorController.dispose();
+    _flickController.dispose();
     super.dispose();
   }
 
+  // Tap gesture
   void _onTap() {
     setState(() {
       _tapCount++;
@@ -55,6 +78,7 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
     _scaleController.forward().then((_) => _scaleController.reverse());
   }
 
+  // Double tap gesture
   void _onDoubleTap() {
     setState(() {
       _doubleTapCount++;
@@ -64,6 +88,7 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
     _rotationController.forward().then((_) => _rotationController.reverse());
   }
 
+  // Long press gesture
   void _onLongPress() {
     setState(() {
       _longPressCount++;
@@ -73,15 +98,58 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
     _colorController.forward().then((_) => _colorController.reverse());
   }
 
+  // Scale gesture (handles both scaling and panning)
+  void _onScaleStart(ScaleStartDetails details) {
+    setState(() {
+      _lastFocalPoint = details.focalPoint;
+      _dragStartTime = DateTime.now();
+      _lastGesture = 'Gesture started';
+    });
+  }
+
   void _onScaleUpdate(ScaleUpdateDetails details) {
     setState(() {
-      // Handle both scale and pan through the scale gesture recognizer
+      // Handle scaling (pinch/spread)
       if (details.scale != 1.0) {
+        double previousScale = _scale;
         _scale = details.scale.clamp(0.5, 3.0);
-        _lastGesture = 'Scale detected! Scale: ${_scale.toStringAsFixed(2)}';
-      } else if (details.focalPointDelta != Offset.zero) {
+        
+        // Determine if it's pinch or spread
+        if (_scale < previousScale) {
+          _pinchCount++;
+          _lastGesture = 'Pinch detected! Count: $_pinchCount, Scale: ${_scale.toStringAsFixed(2)}';
+        } else if (_scale > previousScale) {
+          _spreadCount++;
+          _lastGesture = 'Spread/Zoom detected! Count: $_spreadCount, Scale: ${_scale.toStringAsFixed(2)}';
+        }
+      }
+      
+      // Handle panning through focal point delta
+      if (details.focalPointDelta != Offset.zero) {
         _position += details.focalPointDelta;
-        _lastGesture = 'Pan detected! Position: (${_position.dx.toStringAsFixed(1)}, ${_position.dy.toStringAsFixed(1)})';
+        _panCount++;
+        _lastGesture = 'Panning... Count: $_panCount';
+        
+        // Check if this is a drag gesture (single finger movement)
+        if (details.pointerCount == 1) {
+          _dragCount++;
+          _lastGesture = 'Dragging... Count: $_dragCount';
+        }
+      }
+    });
+  }
+
+  void _onScaleEnd(ScaleEndDetails details) {
+    setState(() {
+      // Check if it was a flick (high velocity)
+      if (details.velocity.pixelsPerSecond.distance > 800) {
+        _flickCount++;
+        _lastGesture = 'Flick detected! Count: $_flickCount';
+        _lastFlickTime = DateTime.now();
+        _lastFlickVelocity = details.velocity.pixelsPerSecond.distance;
+        _flickController.forward().then((_) => _flickController.reverse());
+      } else {
+        _lastGesture = 'Gesture completed. Final scale: ${_scale.toStringAsFixed(2)}';
       }
     });
   }
@@ -105,7 +173,22 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
       _tapCount = 0;
       _longPressCount = 0;
       _doubleTapCount = 0;
+      _dragCount = 0;
+      _flickCount = 0;
+      _pinchCount = 0;
+      _spreadCount = 0;
+      _panCount = 0;
       _lastGesture = 'Counters reset!';
+    });
+  }
+
+  void _resetBox() {
+    setState(() {
+      _scale = 1.0;
+      _rotation = 0.0;
+      _position = const Offset(0, 0);
+      _boxColor = Colors.blue;
+      _lastGesture = 'Box reset to original state!';
     });
   }
 
@@ -113,8 +196,15 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestures Demo'),
+        title: const Text('Flutter Gestures Demo'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _resetBox,
+            tooltip: 'Reset Box',
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -129,7 +219,7 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Interactive Gestures Demo',
+                      'Flutter Gestures Demo',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -137,7 +227,7 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Try different gestures on the interactive box below',
+                      'Demonstrating all Flutter gesture types from TutorialsPoint',
                       style: TextStyle(
                         color: Colors.grey,
                       ),
@@ -163,20 +253,35 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      _lastGesture,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.blue,
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+                      ),
+                      child: Text(
+                        _lastGesture,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
-                        _buildCounterChip('Taps', _tapCount, Colors.green),
-                        _buildCounterChip('Long Press', _longPressCount, Colors.orange),
+                        _buildCounterChip('Tap', _tapCount, Colors.green),
                         _buildCounterChip('Double Tap', _doubleTapCount, Colors.purple),
+                        _buildCounterChip('Long Press', _longPressCount, Colors.orange),
+                        _buildCounterChip('Drag', _dragCount, Colors.blue),
+                        _buildCounterChip('Flick', _flickCount, Colors.red),
+                        _buildCounterChip('Pinch', _pinchCount, Colors.teal),
+                        _buildCounterChip('Spread', _spreadCount, Colors.indigo),
+                        _buildCounterChip('Pan', _panCount, Colors.amber),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -199,18 +304,22 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade300),
                 borderRadius: BorderRadius.circular(12),
+                color: Colors.grey.shade50,
               ),
               child: Center(
                 child: GestureDetector(
                   onTap: _onTap,
                   onDoubleTap: _onDoubleTap,
                   onLongPress: _onLongPress,
+                  onScaleStart: _onScaleStart,
                   onScaleUpdate: _onScaleUpdate,
+                  onScaleEnd: _onScaleEnd,
                   child: AnimatedBuilder(
                     animation: Listenable.merge([
                       _scaleController,
                       _rotationController,
                       _colorController,
+                      _flickController,
                     ]),
                     builder: (context, child) {
                       return Transform.scale(
@@ -232,7 +341,7 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withValues(alpha: 0.2),
-                                    blurRadius: 8,
+                                    blurRadius: 8 + (_flickController.value * 4),
                                     offset: const Offset(0, 4),
                                   ),
                                 ],
@@ -261,18 +370,21 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Available Gestures',
+                      'Available Gestures (from TutorialsPoint)',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _buildGestureInstruction('Tap', 'Single tap to trigger animation', Icons.touch_app),
-                    _buildGestureInstruction('Double Tap', 'Double tap to rotate 90°', Icons.rotate_right),
-                    _buildGestureInstruction('Long Press', 'Long press to change color', Icons.palette),
-                    _buildGestureInstruction('Pan', 'Drag to move the box', Icons.drag_handle),
-                    _buildGestureInstruction('Scale', 'Pinch to resize the box', Icons.zoom_in),
+                    _buildGestureInstruction('Tap', 'Touching the surface with fingertip for a short period', Icons.touch_app),
+                    _buildGestureInstruction('Double Tap', 'Tapping twice in a short time', Icons.touch_app),
+                    _buildGestureInstruction('Drag', 'Touching and moving fingertip in a steady manner', Icons.drag_handle),
+                    _buildGestureInstruction('Flick', 'Similar to dragging, but in a speeder way', Icons.flash_on),
+                    _buildGestureInstruction('Pinch', 'Pinching the surface using two fingers', Icons.zoom_out),
+                    _buildGestureInstruction('Spread/Zoom', 'Opposite of pinching', Icons.zoom_in),
+                    _buildGestureInstruction('Panning', 'Touching and moving in any direction without releasing', Icons.pan_tool),
+                    _buildGestureInstruction('Long Press', 'Press and hold for extended period', Icons.timer),
                   ],
                 ),
               ),
@@ -298,6 +410,8 @@ class _GesturesDemoPageState extends State<GesturesDemoPage>
                     _buildPropertyRow('Rotation', '${_rotation.toStringAsFixed(0)}°'),
                     _buildPropertyRow('Position', '(${_position.dx.toStringAsFixed(1)}, ${_position.dy.toStringAsFixed(1)})'),
                     _buildPropertyRow('Color', '#${_boxColor.toARGB32().toRadixString(16).toUpperCase().substring(2)}'),
+                    if (_lastFlickTime != null)
+                      _buildPropertyRow('Last Flick Velocity', '${_lastFlickVelocity.toStringAsFixed(0)} px/s'),
                   ],
                 ),
               ),
