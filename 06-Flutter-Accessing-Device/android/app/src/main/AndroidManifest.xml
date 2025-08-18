@@ -3,7 +3,7 @@
     <!-- Optional: exact alarm permission for Android 13+ if OEM requires it -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <application
-        android:label="flutter_accessing_device"
+        android:label="Flutter Accessing Device"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

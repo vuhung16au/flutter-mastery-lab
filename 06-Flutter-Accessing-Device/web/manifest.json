@@ -1,11 +1,11 @@
 {
-    "name": "flutter_accessing_device",
-    "short_name": "flutter_accessing_device",
+    "name": "Flutter Accessing Device",
+    "short_name": "Flutter Accessing Device",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Flutter app demonstrating access to device features (camera, gallery, calls, notifications, and more).",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

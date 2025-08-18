@@ -24,7 +24,7 @@ class DeviceAccessApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Sydney Device Access Demo',
+      title: 'Flutter Accessing Device',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
