@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_forms_gestures/models/drag_models.dart';
 
 class DragDemoPage extends StatefulWidget {
   const DragDemoPage({super.key});
@@ -463,30 +464,4 @@ class _DragDemoPageState extends State<DragDemoPage> {
   }
 }
 
-class DraggableItem {
-  final String id;
-  final String title;
-  final Color color;
-  final IconData icon;
-
-  DraggableItem({
-    required this.id,
-    required this.title,
-    required this.color,
-    required this.icon,
-  });
-}
-
-class DropZone {
-  final String id;
-  final String title;
-  final Color color;
-  final List<String> acceptedItems;
-
-  DropZone({
-    required this.id,
-    required this.title,
-    required this.color,
-    required this.acceptedItems,
-  });
-}
+ 
