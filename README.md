@@ -1,5 +1,6 @@
 # Flutter Playground
 
+
 A comprehensive collection of Flutter projects demonstrating various concepts, widgets, and best practices.
 
 ## 📁 Project Structure
